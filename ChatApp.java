@@ -68,6 +68,7 @@ public class ChatApp {
             System.out.println("\n" + loginStatusMessage + "\n");
 
             if (isAuthenticated) {
+                QuickChat.run(scanner);
                 break; 
             }
         }
