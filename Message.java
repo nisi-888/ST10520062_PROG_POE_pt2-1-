@@ -4,30 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
  
-/**
- * Represents a single QuickChat message and tracks the messages
- * sent/stored while the program is running.
- */
+//Represents a single QuickChat message and tracks the messages sent/stored while the program is running.
+
 public class Message {
  
-    // ----- shared state (lives for as long as the program runs) -----
+    //  shared state (lives for as long as the program runs) 
     private static final List<Message> sentMessages = new ArrayList<>();
     private static final List<Message> storedMessages = new ArrayList<>();
     private static int totalSent = 0;
  
-    // ----- per-message data -----
+    //  per-message data 
     private final String messageID;
     private final int messageNumber;   // number of messages sent when this one was created (starts at 0)
     private final String recipient;
     private final String messageText;
     private final String messageHash;
  
-    /** Normal constructor: the message ID is generated randomly. */
+    // Normal constructor: the message ID is generated randomly.
     public Message(String recipient, String messageText) {
         this(generateMessageID(), totalSent, recipient, messageText);
     }
  
-    /** Constructor that accepts an ID and number, so the hash can be unit tested. */
+    //Constructor that accepts an ID and number fpr hash
     public Message(String messageID, int messageNumber, String recipient, String messageText) {
         this.messageID = messageID;
         this.messageNumber = messageNumber;
@@ -36,11 +34,9 @@ public class Message {
         this.messageHash = createMessageHash();
     }
  
-    // ------------------------------------------------------------------
+    
     // Required methods
-    // ------------------------------------------------------------------
- 
-    /** Randomly generated ten-digit number (leading zeros allowed). */
+    //Randomly generated ten-digit number (leading zeros allowed)
     public static String generateMessageID() {
         long id = ThreadLocalRandom.current().nextLong(0L, 10_000_000_000L);
         return String.format("%010d", id);
@@ -60,12 +56,8 @@ public class Message {
         return "Message exceeds 250 characters by " + over + "; please reduce the size.";
     }
  
-    /**
-     * Ensures the recipient number starts with an international code (+ and 1-3 digit
-     * country code) followed by no more than ten digits.
-     * Regex pattern written with reference to the Java Pattern documentation:
-     * Oracle (n.d.) java.util.regex.Pattern. (Replace with your own Harvard/APA reference.)
-     */
+    //Ensures the recipient number starts with an international code (+ and 1-3 digit country code) followed by no more than ten digits.
+     
     public String checkRecipientCell() {
         return checkRecipientCell(recipient);
     }
@@ -78,7 +70,7 @@ public class Message {
                 + "Please correct the number and try again.";
     }
  
-    /** Format: first two digits of ID : message number : FIRSTWORD + LASTWORD (all caps). */
+    //Format: first two digits of ID : message number : FIRSTWORD + LASTWORD (all caps). 
     public String createMessageHash() {
         String[] words = messageText.trim().split("\\s+");
         String first = words[0].replaceAll("[^A-Za-z0-9]", "");
@@ -87,10 +79,9 @@ public class Message {
         return (prefix + ":" + messageNumber + ":" + first + last).toUpperCase();
     }
  
-    /**
-     * Lets the user send, disregard or store the message.
-     * 1 = send, 2 = disregard, 3 = store.
-     */
+    // Lets the user send, disregard or store the message.
+    //1 = send, 2 = disregard, 3 = store.
+     
     public String sentMessage(int choice) {
         switch (choice) {
             case 1:
@@ -107,7 +98,7 @@ public class Message {
         }
     }
  
-    /** Returns all messages sent while the program is running. */
+    //Returns all messages sent while the program is running. 
     public static String printMessages() {
         if (sentMessages.isEmpty()) {
             return "No messages have been sent yet.";
@@ -119,16 +110,12 @@ public class Message {
         return sb.toString();
     }
  
-    /** Returns the total number of messages sent. */
+    //Returns the total number of messages sent
     public static int returnTotalMessages() {
         return totalSent;
     }
  
-    /**
-     * Stores the message in a JSON file (messages.json). All stored messages are
-     * written as a JSON array. JSON syntax follows json.org (n.d.) "Introducing JSON".
-     * (Replace with your own Harvard/APA reference.)
-     */
+    //Stores the message in a JSON file 
     public void storeMessage() {
         storedMessages.add(this);
         StringBuilder json = new StringBuilder("[\n");
@@ -149,16 +136,15 @@ public class Message {
         }
     }
  
-    // ------------------------------------------------------------------
-    // Helpers
-    // ------------------------------------------------------------------
- 
+    
+    
+ // Helpers
     private static String escape(String s) {
         return s.replace("\\", "\\\\").replace("\"", "\\\"")
                 .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
     }
  
-    /** Message ID, Message Hash, Recipient, Message - in the order the brief requires. */
+    //Message ID, Message Hash, Recipient, Message - in the order 
     public String getDetails() {
         return "Message ID: " + messageID
                 + "\nMessage Hash: " + messageHash
@@ -171,7 +157,7 @@ public class Message {
     public String getRecipient() { return recipient; }
     public String getMessageText() { return messageText; }
  
-    /** Clears shared state - used by the unit tests so they do not affect each other. */
+    //Clears shared state - used by the unit tests so they do not affect each other
     public static void resetState() {
         sentMessages.clear();
         storedMessages.clear();
